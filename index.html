@@ -1,0 +1,211 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>مختبر التحاليل الطبية</title>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: #f0f4f8;
+    margin: 0;
+    padding: 15px;
+    color: #222;
+}
+
+header {
+    background: #087f8c;
+    color: white;
+    text-align: center;
+    padding: 25px;
+    border-radius: 15px;
+}
+
+.container {
+    background: white;
+    padding: 20px;
+    margin-top: 20px;
+    border-radius: 15px;
+    box-shadow: 0 3px 10px #ddd;
+}
+
+h2 {
+    color: #087f8c;
+}
+
+input, button {
+    width: 100%;
+    padding: 12px;
+    margin: 8px 0;
+    box-sizing: border-box;
+    font-size: 16px;
+    border-radius: 8px;
+}
+
+input {
+    border: 1px solid #ccc;
+}
+
+button {
+    background: #087f8c;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #056570;
+}
+
+.result {
+    padding: 12px;
+    margin-top: 10px;
+    border-radius: 8px;
+    background: #eaf7f7;
+}
+
+.normal {
+    color: green;
+    font-weight: bold;
+}
+
+.high {
+    color: red;
+    font-weight: bold;
+}
+
+.low {
+    color: orange;
+    font-weight: bold;
+}
+
+footer {
+    text-align: center;
+    margin-top: 20px;
+    color: #777;
+    font-size: 13px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>🩺 مختبر التحاليل الطبية</h1>
+    <p>أدخل نتائج تحاليلك وتعرّف على مدى توافقها مع المجال المرجعي</p>
+</header>
+
+<div class="container">
+    <h2>إضافة تحليل جديد</h2>
+
+    <input type="text" id="testName"
+    placeholder="اسم التحليل (مثلاً: Glucose)">
+
+    <input type="number" id="testValue"
+    placeholder="نتيجة التحليل" step="any">
+
+    <input type="text" id="testUnit"
+    placeholder="الوحدة (مثلاً: mg/dL)">
+
+    <input type="number" id="minValue"
+    placeholder="الحد الأدنى الطبيعي" step="any">
+
+    <input type="number" id="maxValue"
+    placeholder="الحد الأعلى الطبيعي" step="any">
+
+    <button onclick="addTest()">تحليل النتيجة</button>
+</div>
+
+<div class="container">
+    <h2>📋 نتائج التحاليل</h2>
+    <div id="results">
+        لا توجد تحاليل حتى الآن.
+    </div>
+</div>
+
+<footer>
+    هذا التطبيق للتوعية فقط ولا يعوض الطبيب.
+    يجب اعتماد المجال المرجعي الموجود في تقرير المختبر.
+</footer>
+
+<script>
+
+function addTest() {
+
+    let name = document.getElementById("testName").value;
+    let value = document.getElementById("testValue").value;
+    let unit = document.getElementById("testUnit").value;
+    let min = document.getElementById("minValue").value;
+    let max = document.getElementById("maxValue").value;
+
+    if (name === "" || value === "" || unit === "" ||
+        min === "" || max === "") {
+        alert("يرجى ملء جميع الخانات");
+        return;
+    }
+
+    value = Number(value);
+    min = Number(min);
+    max = Number(max);
+
+    if (min > max) {
+        alert("الحد الأدنى يجب أن يكون أقل من الحد الأعلى");
+        return;
+    }
+
+    let status = "";
+    let className = "";
+
+    if (value < min) {
+        status = "أقل من المجال المرجعي";
+        className = "low";
+    }
+    else if (value > max) {
+        status = "أعلى من المجال المرجعي";
+        className = "high";
+    }
+    else {
+        status = "داخل المجال المرجعي";
+        className = "normal";
+    }
+
+    let resultDiv = document.getElementById("results");
+
+    if (resultDiv.innerHTML === "لا توجد تحاليل حتى الآن.") {
+        resultDiv.innerHTML = "";
+    }
+
+    let item = document.createElement("div");
+    item.className = "result";
+
+    let title = document.createElement("h3");
+    title.textContent = name;
+
+    let details = document.createElement("p");
+    details.textContent =
+        "النتيجة: " + value + " " + unit +
+        " | المجال المرجعي: " + min + " - " + max + " " + unit;
+
+    let statusText = document.createElement("p");
+    statusText.className = className;
+    statusText.textContent = status;
+
+    item.appendChild(title);
+    item.appendChild(details);
+    item.appendChild(statusText);
+
+    resultDiv.prepend(item);
+
+    document.getElementById("testName").value = "";
+    document.getElementById("testValue").value = "";
+    document.getElementById("testUnit").value = "";
+    document.getElementById("minValue").value = "";
+    document.getElementById("maxValue").value = "";
+}
+
+</script>
+
+</body>
+</html>
